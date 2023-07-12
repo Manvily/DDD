@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
@@ -14,6 +18,12 @@
     <ProjectReference Include="..\DDD.Application\DDD.Application.csproj" />
     <ProjectReference Include="..\DDD.Domain\DDD.Domain.csproj" />
     <ProjectReference Include="..\DDD.Infrastructure\DDD.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Command\Controllers\" />
+    <Folder Include="Controllers\Command\" />
+    <Folder Include="Query\Controllers\" />
   </ItemGroup>
 
 </Project>

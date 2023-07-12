@@ -1,11 +1,16 @@
+using DDD.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+IConfiguration configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSqlServerConnection(configuration);
 
 var app = builder.Build();
 
@@ -23,12 +28,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-interface IWeatherForecastService : x
-{
-}
-
-class x
-{
-
-}
