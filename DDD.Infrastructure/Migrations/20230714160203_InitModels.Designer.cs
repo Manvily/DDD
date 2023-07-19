@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDD.Infrastructure.Migrations
 {
     [DbContext(typeof(SqlServerContext))]
-    [Migration("20230712153954_InitModels")]
+    [Migration("20230714160203_InitModels")]
     partial class InitModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,9 @@ namespace DDD.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("datetimeoffset");
 
@@ -67,10 +70,18 @@ namespace DDD.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("OrderDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset>("Updated")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -81,6 +92,9 @@ namespace DDD.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("datetimeoffset");
 
@@ -88,6 +102,8 @@ namespace DDD.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -224,6 +240,12 @@ namespace DDD.Infrastructure.Migrations
 
             modelBuilder.Entity("DDD.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("DDD.Domain.Entities.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("DDD.Domain.ValueObjects.PaymentStatus", "Payment", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -241,12 +263,20 @@ namespace DDD.Infrastructure.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
+                    b.Navigation("Customer");
+
                     b.Navigation("Payment")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("DDD.Domain.Entities.Product", b =>
                 {
+                    b.HasOne("DDD.Domain.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("DDD.Domain.ValueObjects.NameValue", "Name", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
@@ -282,6 +312,8 @@ namespace DDD.Infrastructure.Migrations
                                 .HasForeignKey("ProductId");
                         });
 
+                    b.Navigation("Category");
+
                     b.Navigation("Name")
                         .IsRequired();
 
@@ -302,6 +334,16 @@ namespace DDD.Infrastructure.Migrations
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DDD.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DDD.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

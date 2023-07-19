@@ -1,4 +1,5 @@
 using DDD.Infrastructure;
+using DDD.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 IConfiguration configuration = builder.Configuration;
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Custom configuration
 builder.Services.AddSqlServerConnection(configuration);
+builder.Services.AddApplicationLayer();
 
 var app = builder.Build();
 
@@ -21,7 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

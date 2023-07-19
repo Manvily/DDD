@@ -4,10 +4,10 @@ namespace DDD.Domain.ValueObjects
 {
     public class Address : ValueObject
     {
-        public string City { get; }
+        public string City { get; set; }
         public string ZipCode { get; }
-        public string Street { get; }
-        public string Country { get; }
+        public string Street { get; set; }
+        public string Country { get; set; }
 
         public Address(string city, string zipCode, string street, string country)
         {

@@ -5,10 +5,10 @@ namespace DDD.Domain.Entities
 {
     public class Product : Entity<Guid>
     {
-        public NameValue Name { get; }
-        public Price Price { get; }
-        public Category Category { get; }
-        public IEnumerable<Order> Orders { get; }
+        public NameValue Name { get; set; }
+        public Price Price { get; set; }
+        public Category Category { get; set; }
+        public IEnumerable<Order> Orders { get; set; }
 
         public Product(NameValue name, Price price, Category category)
         {

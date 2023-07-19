@@ -4,7 +4,7 @@ namespace DDD.Domain.ValueObjects
 {
     public class Price : ValueObject
     {
-        public decimal Value { get; }
+        public decimal Value { get; set; }
 
         public Price(decimal value)
         {

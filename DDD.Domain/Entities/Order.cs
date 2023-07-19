@@ -5,9 +5,9 @@ namespace DDD.Domain.Entities
 {
     public class Order : Entity<Guid>
     {
-        public Customer Customer { get; }
-        public DateTimeOffset OrderDate { get; }
-        public IEnumerable<Product> Products { get; }
+        public Customer Customer { get; set; }
+        public DateTimeOffset OrderDate { get; set; }
+        public IEnumerable<Product> Products { get; set; }
         public PaymentStatus Payment { get; set; }
 
         public Order(Customer customer, DateTimeOffset orderDate, IEnumerable<Product> products, PaymentStatus payment)

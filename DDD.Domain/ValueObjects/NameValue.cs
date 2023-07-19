@@ -4,7 +4,7 @@ namespace DDD.Domain.ValueObjects
 {
     public class NameValue : ValueObject
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
         public NameValue(string name)
         {

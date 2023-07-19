@@ -4,8 +4,8 @@ namespace DDD.Domain.ValueObjects
 {
     public class CustomerName : ValueObject
     {
-        public string First { get; }
-        public string Last { get; }
+        public string First { get; set; }
+        public string Last { get; set; }
 
         public CustomerName(string first, string last)
         {
