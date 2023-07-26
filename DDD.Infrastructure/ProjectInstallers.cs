@@ -1,6 +1,7 @@
 ﻿using DDD.Application.Abstractions;
 using DDD.Infrastructure.Commands;
 using DDD.Infrastructure.EntityFramework;
+using DDD.Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +17,13 @@ namespace DDD.Infrastructure
             services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(connectionString));
             
             // DI
+            // Commands
             services.AddTransient<ICustomersCommandRepository, CustomersCommandRepository>();
             services.AddTransient<IOrderCommandRepository, OrderCommandRepository>();
             services.AddTransient<IProductsCommandRepository, ProductsCommandRepository>();
+
+            // Queries
+            services.AddTransient<ICustomersQueryRepository, CustomersQueryRepository>();
 
             return services;
         }

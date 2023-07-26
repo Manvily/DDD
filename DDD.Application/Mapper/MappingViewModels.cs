@@ -1,4 +1,9 @@
 ﻿using AutoMapper;
+using DDD.Application.Commands.Customers;
+using DDD.Application.Mapper.Dtos;
+using DDD.Application.Queries.Customers;
+using DDD.Domain.Entities;
+using DDD.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +16,7 @@ namespace DDD.Application.Mapper
     {
         public MappingViewModels()
         {
-            //CreateMap<Customer, CustomerViewModel>()
-            //    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            //    .ForMember(dest => dest.Contact, opt => opt.MapFrom(src => src.Contact))
-            //    .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-            //    .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate));
+            CreateMap<Customer, CustomerViewModel>().ReverseMap();
         }
     }
 }
