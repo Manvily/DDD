@@ -14,7 +14,7 @@ namespace DDD.Infrastructure
         {
             // DB
             var connectionString = configuration.GetConnectionString("SqlServer");
-            services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<SqlServerContext>(options => options.UseNpgsql(connectionString));
             
             // DI
             // Commands
