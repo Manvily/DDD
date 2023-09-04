@@ -1,5 +1,4 @@
-﻿using DDD.Api.Query.Controllers;
-using DDD.Application.Commands.Customers;
+﻿using DDD.Application.Commands.Customers;
 using DDD.Application.Queries.Customers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

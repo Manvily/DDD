@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DDD.Api.Query.Controllers
+namespace DDD.Api.Queries.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

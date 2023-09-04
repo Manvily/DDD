@@ -1,3 +1,4 @@
+using DDD.Api.Startup;
 using DDD.Infrastructure;
 using DDD.Application;
 
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 // Custom configuration
 builder.Services.AddSqlServerConnection(configuration);
 builder.Services.AddApplicationLayer();
+builder.Services.AddCacheConfiguration(configuration);
 
 var app = builder.Build();
 

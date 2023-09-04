@@ -1,14 +1,7 @@
 ﻿using AutoMapper;
-using DDD.Application.Commands.Customers;
-using DDD.Application.Mapper.Dtos;
 using DDD.Application.Queries.Customers;
 using DDD.Domain.Entities;
-using DDD.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DDD.Application.Queries.Products;
 
 namespace DDD.Application.Mapper
 {
@@ -17,6 +10,11 @@ namespace DDD.Application.Mapper
         public MappingViewModels()
         {
             CreateMap<Customer, CustomerViewModel>().ReverseMap();
+            CreateMap<Product, ProductViewModel>()
+                .ForMember(x => x.Price, opt => opt.MapFrom(src => src.Price.Value))
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.Name.Name))
+                .ForMember(x => x.CategoryName, opt => opt.MapFrom(src => src.Category.Name.Name))
+                .ForMember(x => x.CategoryId, opt => opt.MapFrom(src => src.Category.Id));
         }
     }
 }

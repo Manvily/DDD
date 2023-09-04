@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using DDD.Application.Abstractions;
-using DDD.Application.Commands.Customers;
 using DDD.Domain.Entities;
 using DDD.Domain.ValueObjects;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DDD.Application.Commands.Orders
 {
@@ -33,7 +27,7 @@ namespace DDD.Application.Commands.Orders
 
         public async Task<OrderDto> Handle(OrderCreateCommand command, CancellationToken cancellationToken)
         {
-            var customer = await _customersCommandRepository.Find(command.CustomerId);
+            var customer = await _customersCommandRepository.FindAsync(command.CustomerId);
 
             if (customer == null)
                 throw new Exception("Customer not found");
@@ -41,7 +35,7 @@ namespace DDD.Application.Commands.Orders
             var products = await _productsCommandRepository.FindMany(command.ProductsIds);
 
 
-            if (products == null || products.Count() == 0)
+            if (products == null || !products.Any())
                 throw new Exception("Products not found");
 
             if (products.Count() != command.ProductsIds.Count())

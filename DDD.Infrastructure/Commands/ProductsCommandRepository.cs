@@ -1,12 +1,7 @@
-﻿using DDD.Application.Abstractions;
+using DDD.Application.Abstractions;
 using DDD.Domain.Entities;
 using DDD.Infrastructure.EntityFramework;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DDD.Infrastructure.Commands
 {

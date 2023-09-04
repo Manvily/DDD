@@ -5,19 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DDD.Infrastructure.Queries
 {
-    internal class CustomersQueryRepository : ICustomersQueryRepository
+    internal class ProductsQueryRepository : IProductsQueryRepository
     {
         private readonly SqlServerContext _context;
 
-        public CustomersQueryRepository(SqlServerContext context)
+        public ProductsQueryRepository(SqlServerContext context)
         {
             _context = context;
         }
 
-
-        public async Task<IEnumerable<Customer>> GetAllAsync()
+        public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Products.Include(x => x.Category).ToListAsync();
         }
     }
 }
