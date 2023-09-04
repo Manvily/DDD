@@ -11,6 +11,6 @@ namespace DDD.Application.Abstractions
     public interface ICustomersCommandRepository
     {
         Task<bool> Create(Customer customerEntity);
-        Task<Customer?> Find(Guid id);
+        Task<Customer?> FindAsync(Guid id);
     }
 }

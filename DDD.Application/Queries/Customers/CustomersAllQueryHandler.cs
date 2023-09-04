@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
 using DDD.Application.Abstractions;
+using DDD.Application.Cache;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DDD.Application.Queries.Customers
 {
@@ -13,16 +9,23 @@ namespace DDD.Application.Queries.Customers
     {
         private readonly ICustomersQueryRepository _customersQueryRepository;
         private readonly IMapper _mapper;
-        public CustomersAllQueryHandler(ICustomersQueryRepository customersQueryRepository, IMapper mapper)
+        private readonly IRedisCache _redisCache;
+
+        public CustomersAllQueryHandler(ICustomersQueryRepository customersQueryRepository, IMapper mapper,
+            IRedisCache redisCache)
         {
             _customersQueryRepository = customersQueryRepository;
             _mapper = mapper;
+            _redisCache = redisCache;
         }
 
-        public async Task<IEnumerable<CustomerViewModel>> Handle(CustomersAllQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CustomerViewModel>> Handle(CustomersAllQuery request,
+            CancellationToken cancellationToken)
         {
-            var customers = await _customersQueryRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<CustomerViewModel>>(customers);
+            var customerList = await _redisCache.GetAsync(CacheKeys.CustomersList,
+                async () => await _customersQueryRepository.GetAllAsync());
+
+            return _mapper.Map<IEnumerable<CustomerViewModel>>(customerList);
         }
     }
 }

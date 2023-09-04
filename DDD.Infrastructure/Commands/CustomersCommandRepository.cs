@@ -26,7 +26,7 @@ namespace DDD.Infrastructure.Commands
             return result;
         }
 
-        public async Task<Customer?> Find(Guid id)
+        public async Task<Customer?> FindAsync(Guid id)
         {
             return await _context.Customers.FindAsync(id);
         }

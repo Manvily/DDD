@@ -1,0 +1,10 @@
+namespace DDD.Application.Queries.Products;
+
+public class ProductViewModel
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public string CategoryName { get; set; }
+    public Guid CategoryId { get; set; }
+}
