@@ -14,7 +14,7 @@ namespace DDD.Application.Commands.Orders
     public class OrderDto
     {
         public CustomerDto Customer { get; set; }
-        public DateTimeOffset OrderDate { get; set; }
+        public DateTime OrderDate { get; set; }
         public IEnumerable<ProductDto> Products { get; set; }
         public PaymentStatusDto Payment { get; set; }
     }

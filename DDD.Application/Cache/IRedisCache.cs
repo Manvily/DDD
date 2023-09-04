@@ -2,6 +2,6 @@ namespace DDD.Application.Cache;
 
 public interface IRedisCache
 {
-    Task<T> GetAsync<T>(CacheKeys key, Func<Task<T>> func);
-    Task RemoveAsync(CacheKeys key);
+    Task<T> GetAsync<T>(string key, Func<Task<T>> func);
+    Task RemoveAsync(string key);
 }

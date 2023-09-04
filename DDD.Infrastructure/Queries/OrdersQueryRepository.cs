@@ -16,6 +16,10 @@ internal class OrdersQueryRepository : IOrdersQueryRepository
 
     public async Task<IEnumerable<Order>> GetCustomerOrdersAsync(Guid customerId)
     {
-        return await _context.Orders.Where(x => x.Customer.Id == customerId).ToListAsync();
+        return await _context.Orders.Where(x => x.Customer.Id == customerId)
+            .Include(x => x.Customer)
+            .Include(x => x.Products)
+            .ThenInclude(x => x.Category)
+            .ToListAsync();
     }
 }

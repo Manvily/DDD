@@ -15,9 +15,9 @@ public class RedisCache : IRedisCache
         _distributedCache = distributedCache;
     }
     
-    public async Task<T> GetAsync<T>(CacheKeys key, Func<Task<T>> func)
+    public async Task<T> GetAsync<T>(string key, Func<Task<T>> func)
     {
-        var redisResult = await _distributedCache.GetAsync(key.ToString());
+        var redisResult = await _distributedCache.GetAsync(key);
         
         if (redisResult == null)
         {
@@ -30,12 +30,12 @@ public class RedisCache : IRedisCache
         return JsonSerializer.Deserialize<T>(serializedResults) ?? throw new InvalidOperationException();
     }
     
-    public async Task RemoveAsync(CacheKeys key)
+    public async Task RemoveAsync(string key)
     {
-        await _distributedCache.RemoveAsync(key.ToString());
+        await _distributedCache.RemoveAsync(key);
     }
 
-    private async void SetAsync<T>(CacheKeys key, T value)
+    private async void SetAsync<T>(string key, T value)
     {
         var options = new JsonSerializerOptions()
         {
@@ -43,6 +43,6 @@ public class RedisCache : IRedisCache
             WriteIndented = true,
         };
         var serializedValue = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(value, options));
-        await _distributedCache.SetAsync(key.ToString(), serializedValue);
+        await _distributedCache.SetAsync(key, serializedValue);
     }
 }

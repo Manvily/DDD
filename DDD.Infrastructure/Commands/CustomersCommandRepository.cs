@@ -7,6 +7,7 @@ using DDD.Application.Abstractions;
 using DDD.Application.Commands.Customers;
 using DDD.Domain.Entities;
 using DDD.Infrastructure.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 
 namespace DDD.Infrastructure.Commands
 {

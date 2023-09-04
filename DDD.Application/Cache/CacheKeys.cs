@@ -1,7 +1,9 @@
 namespace DDD.Application.Cache;
 
-public enum CacheKeys
+public static class CacheKeys
 {
-    CustomersList,
-    ProductsList,
+    public const string CustomersList = "CustomersList";
+    public const string ProductsList = "ProductsList";
+    
+    public static string CustomerOrders(Guid customerId) => $"CustomerOrders:{customerId}";
 }

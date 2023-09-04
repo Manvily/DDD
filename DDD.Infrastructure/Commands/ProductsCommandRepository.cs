@@ -16,7 +16,7 @@ namespace DDD.Infrastructure.Commands
 
         public async Task<IEnumerable<Product>> FindMany(IEnumerable<Guid> ids)
         {
-            return await _context.Products.Where(x => ids.Contains(x.Id)).ToListAsync();
+            return await _context.Products.Where(x => ids.Contains(x.Id)).Include(x => x.Category).ToListAsync();
         }
     }
 }
