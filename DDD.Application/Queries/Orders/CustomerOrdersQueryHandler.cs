@@ -1,6 +1,7 @@
 using AutoMapper;
 using DDD.Application.Abstractions;
 using DDD.Application.Cache;
+using DDD.Application.Exceptions;
 using MediatR;
 
 namespace DDD.Application.Queries.Orders;
@@ -25,6 +26,14 @@ public class CustomerOrdersQueryHandler : IRequestHandler<CustomerOrdersQuery, I
         var customerList = await _redisCache.GetAsync(CacheKeys.CustomerOrders(request.CustomerId),
             async () => await _ordersQueryRepository.GetCustomerOrdersAsync(request.CustomerId));
 
+        if (!customerList.Any())
+        {
+            throw new NotExistsException("The resource was not found")
+            {
+                Ids = new[] { request.CustomerId }
+            };
+        }
+        
         return _mapper.Map<IEnumerable<OrderViewModel>>(customerList);
     }
 }
