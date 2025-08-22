@@ -1,10 +1,5 @@
-﻿using DDD.Domain.Core;
-using DDD.Infrastructure.EntityFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DDD.Infrastructure.EntityFramework;
+using Shared.Domain.Core;
 
 namespace DDD.Infrastructure.Commands
 {

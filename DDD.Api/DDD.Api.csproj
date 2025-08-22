@@ -5,6 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +24,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DDD.Application\DDD.Application.csproj" />
-    <ProjectReference Include="..\DDD.Domain\DDD.Domain.csproj" />
     <ProjectReference Include="..\DDD.Infrastructure\DDD.Infrastructure.csproj" />
+    <ProjectReference Include="..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
   </ItemGroup>
 
-
-
+  <ItemGroup>
+    <Folder Include="DomainEventHandlers\" />
+  </ItemGroup>
 </Project>

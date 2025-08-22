@@ -1,9 +1,9 @@
-using DDD.Domain.Events;
 using MediatR;
+using Shared.Domain.Events;
 
 namespace DDD.Application.Cache.Customers;
 
-public class RemoveCustomersListQueryCacheHandler : INotificationHandler<CustomerAdded>
+public class RemoveCustomersListQueryCacheHandler : INotificationHandler<CustomerCreatedEvent>
 {
     private readonly IRedisCache _redisCache;
     
@@ -12,7 +12,7 @@ public class RemoveCustomersListQueryCacheHandler : INotificationHandler<Custome
         _redisCache = redisCache;
     }
     
-    public async Task Handle(CustomerAdded notification, CancellationToken cancellationToken)
+    public async Task Handle(CustomerCreatedEvent notification, CancellationToken cancellationToken)
     {
         await _redisCache.RemoveAsync(CacheKeys.CustomersList);
     }

@@ -1,4 +1,4 @@
-﻿namespace DDD.Domain.Core
+﻿namespace Shared.Domain.Core
 {
     public abstract class ValueObject
     {
