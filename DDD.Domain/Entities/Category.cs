@@ -1,5 +1,5 @@
-﻿using DDD.Domain.Core;
-using DDD.Domain.ValueObjects;
+﻿using DDD.Domain.ValueObjects;
+using Shared.Domain.Core;
 
 namespace DDD.Domain.Entities
 {

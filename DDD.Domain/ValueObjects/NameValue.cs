@@ -1,4 +1,4 @@
-﻿using DDD.Domain.Core;
+﻿using Shared.Domain.Core;
 
 namespace DDD.Domain.ValueObjects
 {

@@ -12,8 +12,11 @@ namespace DDD.Application
     {
         public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
         {
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            var assembly = Assembly.GetExecutingAssembly();
+
+            services.AddAutoMapper(assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+            
             return services;
         }
     }

@@ -11,13 +11,36 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Domain", "DDD.Domain\DD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Infrastructure", "DDD.Infrastructure\DDD.Infrastructure.csproj", "{5FA403F5-F4DB-40D1-B3E2-F8983F328059}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9FFF8048-8EDB-42BC-9A20-CC42DC6FC18C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MainApi", "MainApi", "{9FFF8048-8EDB-42BC-9A20-CC42DC6FC18C}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{07EBDF91-2070-4504-B16A-CDB5FFA3485E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Dockerfile = Dockerfile
+		docker-compose.yml = docker-compose.yml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analytics", "Analytics", "{CFCFA245-FB2B-4D5B-A316-DD66EED0712D}"
+	ProjectSection(SolutionItems) = preProject
+		Analytics\Dockerfile = Analytics\Dockerfile
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics.Api", "Analytics\src\Analytics.Api\Analytics.Api.csproj", "{38803005-3E34-4984-A1A2-2EAF00B73895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics.Application", "Analytics\src\Analytics.Application\Analytics.Application.csproj", "{CE1F6B0A-29A5-4ACD-89BF-7819764DE9DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics.Infrastructure", "Analytics\src\Analytics.Infrastructure\Analytics.Infrastructure.csproj", "{D16569D9-077D-4B61-B4C5-29C34CD5450C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6A5C00BF-28E2-4B27-9A2B-66712E341424}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Domain", "Shared\Shared.Domain\Shared.Domain.csproj", "{2D36065D-B463-4F1E-9F0E-B1DC66C856A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Infrastructure", "Shared\Shared.Infrastructure\Shared.Infrastructure.csproj", "{89DF16AB-DF9C-45DA-A7A6-C0195C6C2FF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics.Domain", "Analytics\src\Analytics.Domain\Analytics.Domain.csproj", "{95BFF6AB-CF29-411F-B142-C6BAF40C0495}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +64,30 @@ Global
 		{5FA403F5-F4DB-40D1-B3E2-F8983F328059}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FA403F5-F4DB-40D1-B3E2-F8983F328059}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FA403F5-F4DB-40D1-B3E2-F8983F328059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38803005-3E34-4984-A1A2-2EAF00B73895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38803005-3E34-4984-A1A2-2EAF00B73895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38803005-3E34-4984-A1A2-2EAF00B73895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38803005-3E34-4984-A1A2-2EAF00B73895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1F6B0A-29A5-4ACD-89BF-7819764DE9DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1F6B0A-29A5-4ACD-89BF-7819764DE9DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1F6B0A-29A5-4ACD-89BF-7819764DE9DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1F6B0A-29A5-4ACD-89BF-7819764DE9DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D16569D9-077D-4B61-B4C5-29C34CD5450C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D16569D9-077D-4B61-B4C5-29C34CD5450C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D16569D9-077D-4B61-B4C5-29C34CD5450C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D16569D9-077D-4B61-B4C5-29C34CD5450C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D36065D-B463-4F1E-9F0E-B1DC66C856A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D36065D-B463-4F1E-9F0E-B1DC66C856A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D36065D-B463-4F1E-9F0E-B1DC66C856A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D36065D-B463-4F1E-9F0E-B1DC66C856A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89DF16AB-DF9C-45DA-A7A6-C0195C6C2FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89DF16AB-DF9C-45DA-A7A6-C0195C6C2FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89DF16AB-DF9C-45DA-A7A6-C0195C6C2FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89DF16AB-DF9C-45DA-A7A6-C0195C6C2FF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95BFF6AB-CF29-411F-B142-C6BAF40C0495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95BFF6AB-CF29-411F-B142-C6BAF40C0495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95BFF6AB-CF29-411F-B142-C6BAF40C0495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95BFF6AB-CF29-411F-B142-C6BAF40C0495}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +97,12 @@ Global
 		{E5A0867B-B510-4BCF-BC4F-A6671A88FA75} = {9FFF8048-8EDB-42BC-9A20-CC42DC6FC18C}
 		{5A534D68-4538-4A14-A82F-3329CD571666} = {9FFF8048-8EDB-42BC-9A20-CC42DC6FC18C}
 		{5FA403F5-F4DB-40D1-B3E2-F8983F328059} = {9FFF8048-8EDB-42BC-9A20-CC42DC6FC18C}
+		{38803005-3E34-4984-A1A2-2EAF00B73895} = {CFCFA245-FB2B-4D5B-A316-DD66EED0712D}
+		{CE1F6B0A-29A5-4ACD-89BF-7819764DE9DB} = {CFCFA245-FB2B-4D5B-A316-DD66EED0712D}
+		{D16569D9-077D-4B61-B4C5-29C34CD5450C} = {CFCFA245-FB2B-4D5B-A316-DD66EED0712D}
+		{2D36065D-B463-4F1E-9F0E-B1DC66C856A9} = {6A5C00BF-28E2-4B27-9A2B-66712E341424}
+		{89DF16AB-DF9C-45DA-A7A6-C0195C6C2FF2} = {6A5C00BF-28E2-4B27-9A2B-66712E341424}
+		{95BFF6AB-CF29-411F-B142-C6BAF40C0495} = {CFCFA245-FB2B-4D5B-A316-DD66EED0712D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D36BE18A-E724-4048-AB91-D5902BC06E70}

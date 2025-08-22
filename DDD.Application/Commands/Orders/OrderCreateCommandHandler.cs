@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using DDD.Application.Abstractions;
 using DDD.Domain.Entities;
-using DDD.Domain.Events;
 using DDD.Domain.ValueObjects;
 using MediatR;
+using Shared.Domain.Events;
 
 namespace DDD.Application.Commands.Orders
 {
@@ -57,12 +57,9 @@ namespace DDD.Application.Commands.Orders
             return dto;
         }
         
-        private OrderAdded CreateEvent(Order order)
+        private static OrderCreatedEvent CreateEvent(Order order)
         {
-            return new OrderAdded
-            {
-                CustomerId = order.Customer.Id
-            };
+            return new OrderCreatedEvent(order.Customer.Id, "MainApi", order.Id);
         }
     }
 }
