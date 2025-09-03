@@ -43,14 +43,14 @@ public class RabbitMqEventPublisher(RabbitMqConnection rabbitMqConnection,
                 basicProperties: properties,
                 body: body);
 
-            logger.LogInformation("Event {EventType} with ID {EventId} published to RabbitMQ with routing key: {RoutingKey}", 
+            logger.LogInformation("Event {EventType} with ID {DomainEventId} published to RabbitMQ with routing key: {RoutingKey}", 
                 @event.EventType, @event.EventId, routingKey);
 
             await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to publish event {EventType} with ID {EventId}", 
+            logger.LogError(ex, "Failed to publish event {EventType} with ID {DomainEventId}", 
                 @event.EventType, @event.EventId);
             throw;
         }

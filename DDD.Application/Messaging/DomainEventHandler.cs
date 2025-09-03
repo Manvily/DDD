@@ -26,18 +26,18 @@ namespace DDD.Application.Messaging
         {
             try
             {
-                logger.LogInformation("Publishing domain event {EventType} with ID {EventId} to RabbitMQ",
-                    notification.EventType, notification.EventId);
+                logger.LogInformation("Publishing domain event {EventType} with ID {DomainEventId} to RabbitMQ",
+                    notification.EventType, notification.EventId.ToString());
 
                 await eventPublisher.PublishAsync(notification, "analytics.events", "analytics.raw");
 
-                logger.LogInformation("Successfully published domain event {EventType} with ID {EventId} to RabbitMQ",
-                    notification.EventType, notification.EventId);
+                logger.LogInformation("Successfully published domain event {EventType} with ID {DomainEventId} to RabbitMQ",
+                    notification.EventType, notification.EventId.ToString());
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to publish domain event {EventType} with ID {EventId} to RabbitMQ",
-                    notification.EventType, notification.EventId);
+                logger.LogError(ex, "Failed to publish domain event {EventType} with ID {DomainEventId} to RabbitMQ",
+                    notification.EventType, notification.EventId.ToString());
                 throw;
             }
         }

@@ -50,13 +50,13 @@ public class MongoDbAnalyticsEventCommandRepository : IAnalyticsEventCommandRepo
 
             await _collection.InsertOneAsync(document);
 
-            _logger.LogInformation("Successfully stored analytics event {EventType} with ID {EventId}",
-                domainEvent.EventType, domainEvent.EventId);
+            _logger.LogInformation("Successfully stored analytics event {EventType} with ID {DomainEventId}",
+                domainEvent.EventType, domainEvent.EventId.ToString());
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to store analytics event {EventType} with ID {EventId}",
-                domainEvent.EventType, domainEvent.EventId);
+            _logger.LogError(ex, "Failed to store analytics event {EventType} with ID {DomainEventId}",
+                domainEvent.EventType, domainEvent.EventId.ToString());
             throw;
         }
     }

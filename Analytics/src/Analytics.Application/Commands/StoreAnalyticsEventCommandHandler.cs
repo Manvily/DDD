@@ -14,18 +14,18 @@ public class StoreAnalyticsEventCommandHandler(IAnalyticsEventCommandRepository 
 
         try
         {
-            logger.LogInformation("Storing analytics event: {EventType} with ID: {EventId}",
-                request.DomainEvent.EventType, request.DomainEvent.EventId);
+            logger.LogInformation("Storing analytics event: {EventType} with ID: {DomainEventId}",
+                request.DomainEvent.EventType, request.DomainEvent.EventId.ToString());
 
             await commandRepository.StoreEventAsync(request.DomainEvent, stopwatch.Elapsed);
 
-            logger.LogInformation("Successfully stored {EventType} event: {EventId} in {ProcessingTime}ms",
-                request.DomainEvent.EventType, request.DomainEvent.EventId, stopwatch.ElapsedMilliseconds);
+            logger.LogInformation("Successfully stored {EventType} event: {DomainEventId} in {ProcessingTime}ms",
+                request.DomainEvent.EventType, request.DomainEvent.EventId.ToString(), stopwatch.ElapsedMilliseconds);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to store {EventType} event: {EventId}",
-                request.DomainEvent.EventType, request.DomainEvent.EventId);
+            logger.LogError(ex, "Failed to store {EventType} event: {DomainEventId}",
+                request.DomainEvent.EventType, request.DomainEvent.EventId.ToString());
 
             // Store failed event for retry mechanism
             try
@@ -34,8 +34,8 @@ public class StoreAnalyticsEventCommandHandler(IAnalyticsEventCommandRepository 
             }
             catch (Exception storeEx)
             {
-                logger.LogError(storeEx, "Failed to store failed event {EventType} with ID {EventId} for retry",
-                    request.DomainEvent.EventType, request.DomainEvent.EventId);
+                logger.LogError(storeEx, "Failed to store failed event {EventType} with ID {DomainEventId} for retry",
+                    request.DomainEvent.EventType, request.DomainEvent.EventId.ToString());
             }
 
             throw;

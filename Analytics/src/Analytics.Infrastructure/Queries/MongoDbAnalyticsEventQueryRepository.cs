@@ -46,7 +46,7 @@ public class MongoDbAnalyticsEventQueryRepository : IAnalyticsEventQueryReposito
             }
             catch (JsonException ex)
             {
-                _logger.LogWarning(ex, "Failed to deserialize event data for event {EventId}", doc.EventId);
+                _logger.LogWarning(ex, "Failed to deserialize event data for event {DomainEventId}", doc.EventId);
                 return new { };
             }
         });
@@ -68,7 +68,7 @@ public class MongoDbAnalyticsEventQueryRepository : IAnalyticsEventQueryReposito
             }
             catch (JsonException ex)
             {
-                _logger.LogWarning(ex, "Failed to deserialize event data for event {EventId}", doc.EventId);
+                _logger.LogWarning(ex, "Failed to deserialize event data for event {DomainEventId}", doc.EventId);
                 return new { };
             }
         });
@@ -161,7 +161,7 @@ public class MongoDbAnalyticsEventQueryRepository : IAnalyticsEventQueryReposito
         {
             if (string.IsNullOrEmpty(doc.Data))
             {
-                _logger.LogWarning("Event data is null or empty for event {EventId}", doc.EventId);
+                _logger.LogWarning("Event data is null or empty for event {DomainEventId}", doc.EventId);
                 return null;
             }
 
@@ -179,11 +179,11 @@ public class MongoDbAnalyticsEventQueryRepository : IAnalyticsEventQueryReposito
         }
         catch (JsonException ex)
         {
-            _logger.LogWarning(ex, "Failed to deserialize order event data for event {EventId}", doc.EventId);
+            _logger.LogWarning(ex, "Failed to deserialize order event data for event {DomainEventId}", doc.EventId);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to extract order data from event {EventId}", doc.EventId);
+            _logger.LogWarning(ex, "Failed to extract order data from event {DomainEventId}", doc.EventId);
         }
 
         return null;

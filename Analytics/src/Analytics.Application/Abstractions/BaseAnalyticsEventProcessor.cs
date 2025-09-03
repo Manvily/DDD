@@ -14,20 +14,20 @@ public abstract class BaseAnalyticsEventProcessor(ILogger logger,
 
         try
         {
-            logger.LogInformation("Processing analytics event: {EventType} with ID: {EventId}",
-                domainEvent.EventType, domainEvent.EventId);
+            logger.LogInformation("Processing analytics event: {EventType} with ID: {DomainEventId}",
+                domainEvent.EventType, domainEvent.EventId.ToString());
 
             // Store event in MongoDB
             await analyticsEventCommandRepository.StoreEventAsync(domainEvent, stopwatch.Elapsed);
 
-            logger.LogInformation("Successfully processed {EventType} event: {EventId} in {ProcessingTime}ms",
-                domainEvent.EventType, domainEvent.EventId, stopwatch.ElapsedMilliseconds);
+            logger.LogInformation("Successfully processed {EventType} event: {DomainEventId} in {ProcessingTime}ms",
+                domainEvent.EventType, domainEvent.EventId.ToString(), stopwatch.ElapsedMilliseconds);
         }
         catch (Exception ex)
         {
             errorMessage = ex.Message;
-            logger.LogError(ex, "Failed to process {EventType} event: {EventId}",
-                domainEvent.EventType, domainEvent.EventId);
+            logger.LogError(ex, "Failed to process {EventType} event: {DomainEventId}",
+                domainEvent.EventType, domainEvent.EventId.ToString());
 
             // Store failed event for retry mechanism
             try
@@ -36,8 +36,8 @@ public abstract class BaseAnalyticsEventProcessor(ILogger logger,
             }
             catch (Exception storeEx)
             {
-                logger.LogError(storeEx, "Failed to store failed event {EventType} with ID {EventId} for retry",
-                    domainEvent.EventType, domainEvent.EventId);
+                logger.LogError(storeEx, "Failed to store failed event {EventType} with ID {DomainEventId} for retry",
+                    domainEvent.EventType, domainEvent.EventId.ToString());
             }
 
             throw;

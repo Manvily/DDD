@@ -22,4 +22,9 @@
 
 
 
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

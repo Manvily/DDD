@@ -1,37 +1,45 @@
 using Analytics.Application.Abstractions;
 using Analytics.Application.EventHandlers;
+using Analytics.Domain.Abstractions;
 using Analytics.Infrastructure.Commands;
+using Analytics.Infrastructure.Configuration;
 using Analytics.Infrastructure.Consumers;
 using Analytics.Infrastructure.MongoDB;
 using Analytics.Infrastructure.Queries;
+using Analytics.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
 using Shared.Infrastructure.Messaging;
 using Shared.Infrastructure.Startup;
 
-namespace Analytics.Infrastructure
+namespace Analytics.Infrastructure;
+
+public static class ProjectInstallers
 {
-    public static class ProjectInstallers
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-        {
-            // Add MongoDB services and configuration
-            services.AddMongoDbServices(configuration);
-            services.AddMongoDb(configuration);
+        // Add MongoDB services and configuration
+        services.AddMongoDbServices(configuration);
+        services.AddMongoDb(configuration);
 
-            // Add RabbitMQ messaging
-            services.AddRabbitMQMessaging(configuration);
+        // Add RabbitMQ messaging
+        services.AddRabbitMQMessaging(configuration);
 
-            // Register background services
-            services.AddHostedService<AnalyticsEventConsumer>();
+        // Elasticsearch
+        services.AddElasticsearch(configuration, "Analytics-API");
 
-            return services;
-        }
+        // Register background services
+        services.AddHostedService<AnalyticsEventConsumer>();
 
-            public static IServiceCollection AddMongoDb(this IServiceCollection services, IConfiguration configuration)
+        return services;
+    }
+
+    public static IServiceCollection AddMongoDb(this IServiceCollection services, IConfiguration configuration)
     {
         // Configure MongoDB settings
         services.Configure<MongoDbSettings>(configuration.GetSection(MongoDbSettings.SectionName));
@@ -57,7 +65,8 @@ namespace Analytics.Infrastructure
 
             // Configure timeouts
             mongoClientSettings.ConnectTimeout = TimeSpan.FromMilliseconds(settings.ConnectionTimeoutMs);
-            mongoClientSettings.ServerSelectionTimeout = TimeSpan.FromMilliseconds(settings.ServerSelectionTimeoutMs);
+            mongoClientSettings.ServerSelectionTimeout =
+                TimeSpan.FromMilliseconds(settings.ServerSelectionTimeoutMs);
             mongoClientSettings.SocketTimeout = TimeSpan.FromMilliseconds(settings.SocketTimeoutMs);
 
             // Configure retry policies
@@ -109,5 +118,22 @@ namespace Analytics.Infrastructure
         return services;
     }
 
+    public static IServiceCollection AddElasticsearch(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        string serviceName)
+    {
+    //     // Configure Elasticsearch settings
+    //     services.Configure<ElasticsearchSettings>(configuration.GetSection("Elasticsearch"));
+    //
+    //     // Register Elasticsearch service with service name
+    //     services.AddTransient<IElasticsearchService>(provider =>
+    //     {
+    //         var settings = provider.GetRequiredService<IOptions<ElasticsearchSettings>>();
+    //         var logger = provider.GetRequiredService<ILogger<ElasticsearchService>>();
+    //         return new ElasticsearchService(settings, logger, serviceName);
+    //     });
+    //
+    return services;
     }
 }
