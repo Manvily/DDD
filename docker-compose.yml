@@ -23,12 +23,16 @@ services:
       - RabbitMQ__UserName=admin
       - RabbitMQ__Password=admin123
       - RabbitMQ__VirtualHost=/
+      - Elasticsearch__Url=http://elasticsearch:9200
+      - Elasticsearch__DefaultIndex=ddd-events
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       message-broker:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - app-network
@@ -56,12 +60,16 @@ services:
       - RabbitMQ__UserName=admin
       - RabbitMQ__Password=admin123
       - RabbitMQ__VirtualHost=/
+      - Elasticsearch__Url=http://elasticsearch:9200
+      - Elasticsearch__DefaultIndex=analytics-events
     depends_on:
       mongo-analytics:
         condition: service_healthy
       redis:
         condition: service_healthy
       message-broker:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - app-network
@@ -135,6 +143,48 @@ services:
     networks:
       - app-network
 
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - app-network
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - app-network
+
   # API Gateway 
 #  api-gateway:
 #    image: nginx:alpine
@@ -152,6 +202,7 @@ volumes:
   postgres-data:
   mongo-data:
   rabbitmq-data:
+  elasticsearch-data:
 
 networks:
   app-network:

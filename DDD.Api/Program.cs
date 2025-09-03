@@ -5,11 +5,17 @@ using DDD.Application;
 using DDD.Application.Exceptions;
 using DDD.Application.Messaging;
 using Microsoft.AspNetCore.Diagnostics;
-using Shared.Infrastructure.Messaging;
-using Shared.Infrastructure.Startup;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+Serilog.Debugging.SelfLog.Enable(Console.Error);
 // Add services to the container.
 
 IConfiguration configuration = builder.Configuration;

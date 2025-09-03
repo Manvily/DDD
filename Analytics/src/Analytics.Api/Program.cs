@@ -1,7 +1,18 @@
 using Analytics.Application;
 using Analytics.Infrastructure;
+using Serilog;
+using Serilog.Debugging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+Serilog.Debugging.SelfLog.Enable(Console.Error);
+// Serilog.Debugging.SelfLog.Enable(msg => System.Diagnostics.Debug.WriteLine(msg));
 
 // Add services to the container.
 builder.Services.AddControllers();
