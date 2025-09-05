@@ -1,11 +1,13 @@
 using DDD.Application.Queries.Products;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDD.Api.Queries.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ProductsQueryController : ControllerBase
 {
     private readonly ILogger<ProductsQueryController> _logger;

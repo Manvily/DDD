@@ -1,11 +1,13 @@
 using DDD.Application.Queries.Orders;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDD.Api.Queries.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class OrdersQueryController : ControllerBase
 {
     private readonly ILogger<OrdersQueryController> _logger;

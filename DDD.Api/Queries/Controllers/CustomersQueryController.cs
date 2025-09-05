@@ -1,11 +1,13 @@
 ﻿using DDD.Application.Queries.Customers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDD.Api.Queries.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomersQueryController : ControllerBase
     {
         private readonly ILogger<CustomersQueryController> _logger;
