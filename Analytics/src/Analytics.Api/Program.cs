@@ -27,16 +27,32 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         var keycloakConfig = builder.Configuration.GetSection("Keycloak");
         options.Authority = keycloakConfig["Authority"];
+        options.RequireHttpsMetadata = false; 
         options.Audience = keycloakConfig["Audience"];
-        options.RequireHttpsMetadata = keycloakConfig.GetValue<bool>("RequireHttpsMetadata");
         
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = keycloakConfig.GetValue<bool>("ValidateIssuer"),
             ValidateAudience = keycloakConfig.GetValue<bool>("ValidateAudience"),
             ValidateLifetime = keycloakConfig.GetValue<bool>("ValidateLifetime"),
+            ValidateIssuerSigningKey = true, 
+            ValidIssuer = keycloakConfig["Authority"], 
+            ValidAudience = keycloakConfig["Audience"],
             ClockSkew = TimeSpan.Parse(keycloakConfig["ClockSkew"] ?? "00:05:00"),
-            RoleClaimType = "realm_access.roles"
+        };
+        
+        options.MetadataAddress = keycloakConfig.GetValue<string>("MetadataAddress") ?? throw new Exception("MetadataAddress is required");
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx => { 
+                Console.WriteLine("AuthFailed: " + ctx.Exception.ToString());
+                return Task.CompletedTask;
+            },
+            OnChallenge = ctx => {
+                Console.WriteLine($"Challenge: {ctx.Error} - {ctx.ErrorDescription}");
+                return Task.CompletedTask;
+            }
         };
     });
 

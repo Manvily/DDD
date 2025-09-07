@@ -21,6 +21,7 @@ namespace DDD.Api.Commands.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "MainApi-CreateCustomer")]
         public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] CustomerCreateCommand command)
         {
             var result = await _mediator.Send(command);
