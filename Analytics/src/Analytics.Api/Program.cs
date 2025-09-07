@@ -1,5 +1,8 @@
 using Analytics.Application;
 using Analytics.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Debugging;
 
@@ -17,7 +20,74 @@ Serilog.Debugging.SelfLog.Enable(Console.Error);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Configure Keycloak Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var keycloakConfig = builder.Configuration.GetSection("Keycloak");
+        options.Authority = keycloakConfig["Authority"];
+        options.RequireHttpsMetadata = false; 
+        options.Audience = keycloakConfig["Audience"];
+        
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = keycloakConfig.GetValue<bool>("ValidateIssuer"),
+            ValidateAudience = keycloakConfig.GetValue<bool>("ValidateAudience"),
+            ValidateLifetime = keycloakConfig.GetValue<bool>("ValidateLifetime"),
+            ValidateIssuerSigningKey = true, 
+            ValidIssuer = keycloakConfig["Authority"], 
+            ValidAudience = keycloakConfig["Audience"],
+            ClockSkew = TimeSpan.Parse(keycloakConfig["ClockSkew"] ?? "00:05:00"),
+        };
+        
+        options.MetadataAddress = keycloakConfig.GetValue<string>("MetadataAddress") ?? throw new Exception("MetadataAddress is required");
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx => { 
+                Console.WriteLine("AuthFailed: " + ctx.Exception.ToString());
+                return Task.CompletedTask;
+            },
+            OnChallenge = ctx => {
+                Console.WriteLine($"Challenge: {ctx.Error} - {ctx.ErrorDescription}");
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// Configure Swagger with JWT authentication
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Analytics API", Version = "v1" });
+    
+    // Add JWT authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Add Application Layer
 builder.Services.AddApplication();
@@ -35,6 +105,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

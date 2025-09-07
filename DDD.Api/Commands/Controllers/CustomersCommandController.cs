@@ -1,12 +1,14 @@
 ﻿using DDD.Application.Commands.Customers;
 using DDD.Application.Queries.Customers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDD.Api.Commands.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomersCommandController : Controller
     {
         private readonly ILogger<CustomersCommandController> _logger;
@@ -19,6 +21,7 @@ namespace DDD.Api.Commands.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "MainApi-CreateCustomer")]
         public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] CustomerCreateCommand command)
         {
             var result = await _mediator.Send(command);
