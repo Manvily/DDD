@@ -40,7 +40,7 @@ public class GetCustomerEventsQueryHandlerTests
             new CustomerEventData(
                 Guid.NewGuid().ToString(),
                 Guid.NewGuid().ToString(),
-                "Anna Nowak",
+                "Jan Kowalski 2",
                 DateTime.UtcNow.AddDays(-3),
                 "CustomerUpdated"
             )

@@ -3,6 +3,7 @@ using DDD.Application.Abstractions;
 using DDD.Application.Commands.Customers;
 using DDD.Application.Mapper.Dtos;
 using DDD.Domain.Entities;
+using DDD.Domain.ValueObjects;
 using FluentAssertions;
 using MediatR;
 using Moq;
@@ -39,9 +40,9 @@ public class CustomerCreateCommandHandlerTests
         };
 
         var customer = new Customer(
-            new DDD.Domain.ValueObjects.CustomerName("Jan", "Kowalski"),
-            new DDD.Domain.ValueObjects.Contact("jan@example.com", "123456789"),
-            new DDD.Domain.ValueObjects.Address("Testowa 1", "Warszawa", "00-001", "Polska"),
+            new CustomerName("Jan", "Kowalski"),
+            new Contact("jan@example.com", "123456789"),
+            new Address("Testowa 1", "Warszawa", "00-001", "Polska"),
             new DateTime(1990, 1, 1)
         ) { Id = Guid.NewGuid() };
         var customerDto = new CustomerDto

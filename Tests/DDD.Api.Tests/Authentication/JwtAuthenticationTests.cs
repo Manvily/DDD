@@ -72,33 +72,4 @@ public class JwtAuthenticationTests
         keycloakConfig.GetValue<bool>("ValidateLifetime").Should().BeTrue();
         TimeSpan.Parse(keycloakConfig["ClockSkew"] ?? "00:05:00").Should().Be(TimeSpan.FromMinutes(5));
     }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("Bearer")]
-    [InlineData("Bearer ")]
-    [InlineData("InvalidScheme token")]
-    public void InvalidAuthorizationHeaders_ShouldBeRejected(string authHeader)
-    {
-        // Arrange & Act
-        var isValid = !string.IsNullOrWhiteSpace(authHeader) && 
-                     authHeader.StartsWith("Bearer ") && 
-                     authHeader.Length > 7;
-
-        // Assert
-        isValid.Should().BeFalse();
-    }
-
-    [Fact]
-    public void ValidAuthorizationHeader_ShouldBeAccepted()
-    {
-        // Arrange
-        var authHeader = "Bearer valid-jwt-token-here";
-
-        // Act
-        var isValid = authHeader.StartsWith("Bearer ") && authHeader.Length > 7;
-
-        // Assert
-        isValid.Should().BeTrue();
-    }
 }

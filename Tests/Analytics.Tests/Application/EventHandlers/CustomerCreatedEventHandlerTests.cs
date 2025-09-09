@@ -70,7 +70,7 @@ public class CustomerCreatedEventHandlerTests
     {
         // Arrange
         var customerId = Guid.NewGuid();
-        var customerName = "Anna Nowak";
+        var customerName = "Jan Kowalski 2";
         var serviceName = "TestService";
         
         var customerCreatedEvent = new CustomerCreatedEvent(customerId, customerName, serviceName);
