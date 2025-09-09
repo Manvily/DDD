@@ -6,7 +6,7 @@ using DDD.Application.Queries.Products;
 
 namespace DDD.Application.Mapper
 {
-    internal class MappingViewModels : Profile
+    public class MappingViewModels : Profile
     {
         public MappingViewModels()
         {

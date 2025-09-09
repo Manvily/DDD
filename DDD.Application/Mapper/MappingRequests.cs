@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DDD.Application.Mapper
 {
-    internal class MappingRequests : Profile
+    public class MappingRequests : Profile
     {
         public MappingRequests()
         {

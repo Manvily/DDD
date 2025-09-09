@@ -7,35 +7,34 @@ using DDD.Application.Mapper.Dtos;
 using DDD.Domain.Entities;
 using FluentAssertions;
 using MediatR;
-using Moq;
+using NSubstitute;
 using Shared.Domain.Events;
-using Xunit;
 
 namespace DDD.Application.Tests.Commands.Orders;
 
 public class OrderCreateCommandHandlerTests
 {
-    private readonly Mock<IMapper> _mapperMock;
-    private readonly Mock<IOrderCommandRepository> _orderRepositoryMock;
-    private readonly Mock<ICustomersCommandRepository> _customerRepositoryMock;
-    private readonly Mock<IProductsCommandRepository> _productRepositoryMock;
-    private readonly Mock<IMediator> _mediatorMock;
+    private readonly IMapper _mapper;
+    private readonly IOrderCommandRepository _orderRepository;
+    private readonly ICustomersCommandRepository _customerRepository;
+    private readonly IProductsCommandRepository _productRepository;
+    private readonly IMediator _mediator;
     private readonly OrderCreateCommandHandler _handler;
 
     public OrderCreateCommandHandlerTests()
     {
-        _mapperMock = new Mock<IMapper>();
-        _orderRepositoryMock = new Mock<IOrderCommandRepository>();
-        _customerRepositoryMock = new Mock<ICustomersCommandRepository>();
-        _productRepositoryMock = new Mock<IProductsCommandRepository>();
-        _mediatorMock = new Mock<IMediator>();
+        _mapper = Substitute.For<IMapper>();
+        _orderRepository = Substitute.For<IOrderCommandRepository>();
+        _customerRepository = Substitute.For<ICustomersCommandRepository>();
+        _productRepository = Substitute.For<IProductsCommandRepository>();
+        _mediator = Substitute.For<IMediator>();
         
         _handler = new OrderCreateCommandHandler(
-            _mapperMock.Object,
-            _mediatorMock.Object,
-            _orderRepositoryMock.Object,
-            _productRepositoryMock.Object,
-            _customerRepositoryMock.Object);
+            _mapper,
+            _mediator,
+            _orderRepository,
+            _productRepository,
+            _customerRepository);
     }
 
     [Fact]
@@ -73,7 +72,6 @@ public class OrderCreateCommandHandlerTests
         };
         
         var orderId = Guid.NewGuid();
-        var order = new Order(customer, DateTime.UtcNow, products, new DDD.Domain.ValueObjects.PaymentStatus(false)) { Id = orderId };
         var orderDto = new OrderDto
         {
             Customer = new CustomerDto
@@ -89,23 +87,20 @@ public class OrderCreateCommandHandlerTests
             Payment = new PaymentStatusDto { IsPaid = false }
         };
 
-        _customerRepositoryMock.Setup(x => x.FindAsync(customerId)).ReturnsAsync(customer);
-        _productRepositoryMock.Setup(x => x.FindMany(productIds)).ReturnsAsync(products);
-        _orderRepositoryMock.Setup(x => x.CreateOrder(It.IsAny<Order>()))
-                         .Callback<Order>(o => o.Id = orderId)  // Set ID when order is created
-                         .ReturnsAsync(true);
-        _mapperMock.Setup(x => x.Map<OrderDto>(It.IsAny<Order>())).Returns(orderDto);
-
+        _customerRepository.FindAsync(customerId).Returns(customer);
+        _productRepository.FindMany(productIds).Returns(products);
+        _orderRepository.CreateOrder(Arg.Do<Order>(o => o.Id = Guid.NewGuid())).Returns(true);
+        _mapper.Map<OrderDto>(Arg.Any<Order>()).Returns(orderDto);
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().BeEquivalentTo(orderDto);
         
-        _customerRepositoryMock.Verify(x => x.FindAsync(customerId), Times.Once);
-        _productRepositoryMock.Verify(x => x.FindMany(productIds), Times.Once);
-        _orderRepositoryMock.Verify(x => x.CreateOrder(It.IsAny<Order>()), Times.Once);
-        _mediatorMock.Verify(x => x.Publish(It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+        await _customerRepository.Received(1).FindAsync(customerId);
+        await _productRepository.Received(1).FindMany(productIds);
+        await _orderRepository.Received(1).CreateOrder(Arg.Any<Order>());
+        await _mediator.Received(1).Publish(Arg.Any<OrderCreatedEvent>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -119,15 +114,15 @@ public class OrderCreateCommandHandlerTests
             ProductsIds = new[] { Guid.NewGuid() }
         };
 
-        _customerRepositoryMock.Setup(x => x.FindAsync(customerId)).ReturnsAsync((Customer?)null);
+        _customerRepository.FindAsync(customerId).Returns((Customer?)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be("Customer not found");
         
-        _customerRepositoryMock.Verify(x => x.FindAsync(customerId), Times.Once);
-        _productRepositoryMock.Verify(x => x.FindMany(It.IsAny<IEnumerable<Guid>>()), Times.Never);
-        _orderRepositoryMock.Verify(x => x.CreateOrder(It.IsAny<Order>()), Times.Never);
+        await _customerRepository.Received(1).FindAsync(customerId);
+        await _productRepository.DidNotReceive().FindMany(Arg.Any<IEnumerable<Guid>>());
+        await _orderRepository.DidNotReceive().CreateOrder(Arg.Any<Order>());
     }
 
     [Fact]
@@ -151,16 +146,16 @@ public class OrderCreateCommandHandlerTests
         ) { Id = Guid.NewGuid() };
         var products = new List<Product>(); // Empty list
 
-        _customerRepositoryMock.Setup(x => x.FindAsync(customerId)).ReturnsAsync(customer);
-        _productRepositoryMock.Setup(x => x.FindMany(productIds)).ReturnsAsync(products);
+        _customerRepository.FindAsync(customerId).Returns(customer);
+        _productRepository.FindMany(productIds).Returns(products);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be("Products not found");
         
-        _customerRepositoryMock.Verify(x => x.FindAsync(customerId), Times.Once);
-        _productRepositoryMock.Verify(x => x.FindMany(productIds), Times.Once);
-        _orderRepositoryMock.Verify(x => x.CreateOrder(It.IsAny<Order>()), Times.Never);
+        await _customerRepository.Received(1).FindAsync(customerId);
+        await _productRepository.Received(1).FindMany(productIds);
+        await _orderRepository.DidNotReceive().CreateOrder(Arg.Any<Order>());
     }
 
     [Fact]
@@ -191,15 +186,58 @@ public class OrderCreateCommandHandlerTests
             )
         }; // Only one product found
 
-        _customerRepositoryMock.Setup(x => x.FindAsync(customerId)).ReturnsAsync(customer);
-        _productRepositoryMock.Setup(x => x.FindMany(productIds)).ReturnsAsync(products);
+        _customerRepository.FindAsync(customerId).Returns(customer);
+        _productRepository.FindMany(productIds).Returns(products);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be("Some products were not found");
         
-        _customerRepositoryMock.Verify(x => x.FindAsync(customerId), Times.Once);
-        _productRepositoryMock.Verify(x => x.FindMany(productIds), Times.Once);
-        _orderRepositoryMock.Verify(x => x.CreateOrder(It.IsAny<Order>()), Times.Never);
+        await _customerRepository.Received(1).FindAsync(customerId);
+        await _productRepository.Received(1).FindMany(productIds);
+        await _orderRepository.DidNotReceive().CreateOrder(Arg.Any<Order>());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldThrowException_WhenOrderCreationFails()
+    {
+        // Arrange
+        var customerId = Guid.NewGuid();
+        var productIds = new[] { Guid.NewGuid() };
+        
+        var command = new OrderCreateCommand
+        {
+            CustomerId = customerId,
+            ProductsIds = productIds
+        };
+
+        var customer = new Customer(
+            new DDD.Domain.ValueObjects.CustomerName("Test", "Customer"),
+            new DDD.Domain.ValueObjects.Contact("test@example.com", "123456789"),
+            new DDD.Domain.ValueObjects.Address("Test St", "Test City", "12345", "Test Country"),
+            DateTime.UtcNow.AddYears(-30)
+        ) { Id = customerId };
+        
+        var products = new List<Product> 
+        { 
+            new Product(
+                new DDD.Domain.ValueObjects.NameValue("Product 1"),
+                new DDD.Domain.ValueObjects.Price(10.99m),
+                new Category(new DDD.Domain.ValueObjects.NameValue("Category 1"))
+            )
+        };
+
+        _customerRepository.FindAsync(customerId).Returns(customer);
+        _productRepository.FindMany(productIds).Returns(products);
+        _orderRepository.CreateOrder(Arg.Any<Order>()).Returns(false);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+        exception.Message.Should().Be("Could not create order");
+        
+        await _customerRepository.Received(1).FindAsync(customerId);
+        await _productRepository.Received(1).FindMany(productIds);
+        await _orderRepository.Received(1).CreateOrder(Arg.Any<Order>());
+        await _mediator.DidNotReceive().Publish(Arg.Any<OrderCreatedEvent>(), Arg.Any<CancellationToken>());
     }
 }

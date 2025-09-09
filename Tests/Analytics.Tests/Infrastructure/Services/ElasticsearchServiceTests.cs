@@ -3,21 +3,21 @@ using Analytics.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 using Xunit;
 
 namespace Analytics.Tests.Infrastructure.Services;
 
 public class ElasticsearchServiceTests
 {
-    private readonly Mock<ILogger<ElasticsearchService>> _loggerMock;
-    private readonly Mock<IOptions<ElasticsearchSettings>> _optionsMock;
+    private readonly ILogger<ElasticsearchService> _loggerMock;
+    private readonly IOptions<ElasticsearchSettings> _optionsMock;
     private readonly ElasticsearchSettings _settings;
 
     public ElasticsearchServiceTests()
     {
-        _loggerMock = new Mock<ILogger<ElasticsearchService>>();
-        _optionsMock = new Mock<IOptions<ElasticsearchSettings>>();
+        _loggerMock = Substitute.For<ILogger<ElasticsearchService>>();
+        _optionsMock = Substitute.For<IOptions<ElasticsearchSettings>>();
         
         _settings = new ElasticsearchSettings
         {
@@ -25,18 +25,18 @@ public class ElasticsearchServiceTests
             DefaultIndex = "test-index"
         };
         
-        _optionsMock.Setup(x => x.Value).Returns(_settings);
+        _optionsMock.Value.Returns(_settings);
     }
 
     [Fact]
     public void Constructor_ShouldInitializeService_WithCorrectSettings()
     {
         // Arrange & Act
-        var service = new ElasticsearchService(_optionsMock.Object, _loggerMock.Object, "TestService");
+        var service = new ElasticsearchService(_optionsMock, _loggerMock, "TestService");
 
         // Assert
         service.Should().NotBeNull();
-        _optionsMock.Verify(x => x.Value, Times.Once);
+        var _ = _optionsMock.Received(1).Value;
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class ElasticsearchServiceTests
         // For now, we'll test the service creation and method signatures
         
         // Arrange
-        var service = new ElasticsearchService(_optionsMock.Object, _loggerMock.Object, "TestService");
+        var service = new ElasticsearchService(_optionsMock, _loggerMock, "TestService");
         var document = new { Id = 1, Name = "Test Document" };
 
         // Act & Assert
@@ -62,7 +62,7 @@ public class ElasticsearchServiceTests
     public async Task IndexRabbitMQEventAsync_ShouldCreateCorrectDocumentStructure()
     {
         // Arrange
-        var service = new ElasticsearchService(_optionsMock.Object, _loggerMock.Object, "TestService");
+        var service = new ElasticsearchService(_optionsMock, _loggerMock, "TestService");
         var eventType = "TestEvent";
         var eventData = "Test data";
         var correlationId = "test-correlation-id";
@@ -82,7 +82,7 @@ public class ElasticsearchServiceTests
     public async Task IndexDomainEventAsync_ShouldSerializeEventDataCorrectly()
     {
         // Arrange
-        var service = new ElasticsearchService(_optionsMock.Object, _loggerMock.Object, "TestService");
+        var service = new ElasticsearchService(_optionsMock, _loggerMock, "TestService");
         var eventType = "CustomerCreated";
         var eventData = new { CustomerId = Guid.NewGuid(), Name = "John Doe" };
         var correlationId = "domain-correlation-id";
@@ -100,7 +100,7 @@ public class ElasticsearchServiceTests
     public async Task IndexAnalyticsEventAsync_ShouldUseCorrectIndex()
     {
         // Arrange
-        var service = new ElasticsearchService(_optionsMock.Object, _loggerMock.Object, "AnalyticsService");
+        var service = new ElasticsearchService(_optionsMock, _loggerMock, "AnalyticsService");
         var eventType = "AnalyticsEvent";
         var eventData = new { Metric = "PageView", Count = 1 };
 

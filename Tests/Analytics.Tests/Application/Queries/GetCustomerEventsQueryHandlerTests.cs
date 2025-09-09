@@ -2,22 +2,22 @@ using Analytics.Application.Abstractions;
 using Analytics.Application.Queries;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Xunit;
 
 namespace Analytics.Tests.Application.Queries;
 
 public class GetCustomerEventsQueryHandlerTests
 {
-    private readonly Mock<IAnalyticsEventQueryRepository> _repositoryMock;
-    private readonly Mock<ILogger<GetCustomerEventsQueryHandler>> _loggerMock;
+    private readonly IAnalyticsEventQueryRepository _repositoryMock;
+    private readonly ILogger<GetCustomerEventsQueryHandler> _loggerMock;
     private readonly GetCustomerEventsQueryHandler _handler;
 
     public GetCustomerEventsQueryHandlerTests()
     {
-        _repositoryMock = new Mock<IAnalyticsEventQueryRepository>();
-        _loggerMock = new Mock<ILogger<GetCustomerEventsQueryHandler>>();
-        _handler = new GetCustomerEventsQueryHandler(_repositoryMock.Object, _loggerMock.Object);
+        _repositoryMock = Substitute.For<IAnalyticsEventQueryRepository>();
+        _loggerMock = Substitute.For<ILogger<GetCustomerEventsQueryHandler>>();
+        _handler = new GetCustomerEventsQueryHandler(_repositoryMock, _loggerMock);
     }
 
     [Fact]
@@ -46,15 +46,15 @@ public class GetCustomerEventsQueryHandlerTests
             )
         };
 
-        _repositoryMock.Setup(x => x.GetCustomerEventsAsync(fromDate, toDate))
-                      .ReturnsAsync(expectedEvents);
+        _repositoryMock.GetCustomerEventsAsync(fromDate, toDate)
+                      .Returns(expectedEvents);
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Should().BeEquivalentTo(expectedEvents);
-        _repositoryMock.Verify(x => x.GetCustomerEventsAsync(fromDate, toDate), Times.Once);
+        await _repositoryMock.Received(1).GetCustomerEventsAsync(fromDate, toDate);
         
         // Verify logging
         VerifyLogCalled(LogLevel.Information, "Getting customer events from");
@@ -71,15 +71,15 @@ public class GetCustomerEventsQueryHandlerTests
 
         var emptyEvents = new List<CustomerEventData>();
 
-        _repositoryMock.Setup(x => x.GetCustomerEventsAsync(fromDate, toDate))
-                      .ReturnsAsync(emptyEvents);
+        _repositoryMock.GetCustomerEventsAsync(fromDate, toDate)
+                      .Returns(emptyEvents);
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
-        _repositoryMock.Verify(x => x.GetCustomerEventsAsync(fromDate, toDate), Times.Once);
+        await _repositoryMock.Received(1).GetCustomerEventsAsync(fromDate, toDate);
         
         // Verify logging
         VerifyLogCalled(LogLevel.Information, "Retrieved 0 customer events");
@@ -94,25 +94,23 @@ public class GetCustomerEventsQueryHandlerTests
         var query = new GetCustomerEventsQuery(fromDate, toDate);
         var expectedException = new Exception("Database connection failed");
 
-        _repositoryMock.Setup(x => x.GetCustomerEventsAsync(fromDate, toDate))
-                      .ThrowsAsync(expectedException);
+        _repositoryMock.GetCustomerEventsAsync(fromDate, toDate)
+                      .Returns(Task.FromException<IEnumerable<CustomerEventData>>(expectedException));
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(query, CancellationToken.None));
         exception.Should().BeEquivalentTo(expectedException);
         
-        _repositoryMock.Verify(x => x.GetCustomerEventsAsync(fromDate, toDate), Times.Once);
+        await _repositoryMock.Received(1).GetCustomerEventsAsync(fromDate, toDate);
     }
 
     private void VerifyLogCalled(LogLevel level, string messageContains)
     {
-        _loggerMock.Verify(
-            x => x.Log(
-                level,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(messageContains)),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.AtLeastOnce);
+        _loggerMock.Received().Log(
+            level,
+            Arg.Any<EventId>(),
+            Arg.Is<object>(v => v.ToString()!.Contains(messageContains)),
+            Arg.Any<Exception?>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

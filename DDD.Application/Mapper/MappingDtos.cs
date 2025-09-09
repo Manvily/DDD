@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace DDD.Application.Mapper
 {
-    internal class MappingDtos : Profile
+    public class MappingDtos : Profile
     {
         public MappingDtos()
         {
